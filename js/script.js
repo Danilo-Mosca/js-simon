@@ -35,21 +35,15 @@ function randomGenerate(temporaryRandomNumber) {
     // non siano uguali tra loro
     while (i < 5) {
         let randomNumber = getRndInteger(50, 1);
-        // console.log(randomNumber);
-
-        // for (let j = 0; j < temporaryRandomNumber.length; j++) {
-        //      if (randomNumber === temporaryRandomNumber[j]) {
-        //          break;
-        //      } else {
-        //          temporaryRandomNumber[i] = randomNumber;
-        //          i++;
-        //      }
-        // }
-        temporaryRandomNumber[i] = randomNumber;
-        //Creo un nuovo <li> di <ul> e gli assegno il numero casuale
-        ulNumberList.innerHTML += `<li>${temporaryRandomNumber[i]}</li>`;   //mi creo la <li> contenente il numero generato randomicamente
-        // console.log("Numero casuali: " + temporaryRandomNumber[i]);
-        i++;
+        /* -------- Evito di generare due o più numeri uguali,
+        i numeri random devono essere tutti e 5 diversi -------- */
+        if (!temporaryRandomNumber.includes(randomNumber)) {
+            temporaryRandomNumber[i] = randomNumber;
+            //Creo un nuovo <li> di <ul> e gli assegno il numero casuale
+            ulNumberList.innerHTML += `<li>${temporaryRandomNumber[i]}</li>`;   //mi creo la <li> contenente il numero generato randomicamente
+            // console.log("Numero casuali: " + temporaryRandomNumber[i]);
+            i++;
+        }
     }
 }
 
@@ -67,7 +61,7 @@ function countDown() {
             liCounterDown.classList.add("d-none");
             // Mostro il form di input dove l'utente inserirà i numero
             elementForm.classList.remove("d-none");
-
+            // Termino l'esecuzione del setInterval()
             clearTimeout(timer);
         }
 
@@ -87,18 +81,21 @@ function usersNumberGuessed(event) {
         arrayUsersNumber.push(parseInt(input[i].value));
         // console.log(arrayUsersNumber);
         // console.log(arrayUsersNumber[i]);
-
         // Controllo le occorrenze (se il numero è presente) nell'array dei numeri casuali
         if (temporaryRandomNumber.includes(arrayUsersNumber[i])) {
             // In caso positivo incremento il contatore
             guessedNumber++;
         }
     }
+    // If che controlla se l'utente ha indovinato tutti i numeri,
+    // in tal caso riceve un messaggio di congratulazioni personalizzato
     if (guessedNumber == 5) {
         message.innerHTML = `Complimenti! Hai indovinato <strong>tutti</strong> i numeri!`;
         confetti({ particleCount: 1000, spread: 360 });
     } else {
+        // Aggiungo la classe che toglie i pallini dalla list item
         message.classList.add("list-unstyled");
+        // Altrimenti riceve un messaggio con il numero di occorrenze indovinate
         message.innerHTML = `Hai indovinato <strong>${guessedNumber}</strong> numeri!`;
     }
 }
