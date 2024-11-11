@@ -13,6 +13,8 @@ const ulNumberList = document.getElementById('numbers-list');
 // console.log(ulNumberList);
 const liCounterDown = document.getElementById('counter-down');
 const message = document.getElementById('message');
+const elementButton = document.querySelector('button');
+
 //Array vuoto che si andrà si andrà a riempire di 5 numeri casuali
 const temporaryRandomNumber = [];
 // Array vuoto che si andrà a riempire dei numeri inseriti dall'utente
@@ -65,23 +67,47 @@ function countDown() {
             clearTimeout(timer);
         }
 
-    }, 300);
+    }, 1000);
 }
 /* Funzione che al click del pulsante nel form aggiunge i numeri inseriti
 dall'utente nell'array arrayUsersNumber[] e controlla le occorrenze*/
 function usersNumberGuessed(event) {
     // Prevengo il caricamento della pagina
     event.preventDefault();
+
+    // Aggiungo i validate di Bootstrap
+    elementForm.classList.add("was-validated");
+
     // Contatore numeri indovinati
     let guessedNumber = 0;
+    // Variabile booleana di controllo
+    let flag = true;
     // Ciclo la NodeList input così da assegnare all'array vuoto i 5 numeri inseriti dall'utente
     for (let i = 0; i < input.length; i++) {
-        console.log(input[i].value);
+        // console.log(input[i].value);
 
+        // Controllo se l'utente ha inserito due o più numeri uguali
+        // se è così imposto la variabile di controllo a false
+        if (arrayUsersNumber.includes(parseInt(input[i].value))) {
+            message.innerHTML = "Non puoi inserire due numeri uguali!";
+            // console.log(message.innerHTML);
+            flag = false;
+            break;
+        }
+
+        // Controllo se il numero è compreso nel range da 1 a 50 con
+        // il "metodo di convalida speciale" checkValidity()
+        if (!input[i].checkValidity()) {
+            message.innerHTML = "Devi inserire un numero compreso tra 1 e 50";
+            // console.log(message.innerHTML);
+            flag = false;
+            break;
+        }
         arrayUsersNumber.push(parseInt(input[i].value));
         // console.log(arrayUsersNumber);
         // console.log(arrayUsersNumber[i]);
-        // Controllo le occorrenze (se il numero è presente) nell'array dei numeri casuali
+
+        // Controllo se il numero è presente nell'array dei numeri casuali
         if (temporaryRandomNumber.includes(arrayUsersNumber[i])) {
             // In caso positivo incremento il contatore
             guessedNumber++;
@@ -89,16 +115,18 @@ function usersNumberGuessed(event) {
     }
     // If che controlla se l'utente ha indovinato tutti i numeri,
     // in tal caso riceve un messaggio di congratulazioni personalizzato
-    if (guessedNumber == 5) {
+    if ((guessedNumber == 5) && flag) {
         message.innerHTML = `Complimenti! Hai indovinato <strong>tutti</strong> i numeri!`;
         confetti({ particleCount: 1000, spread: 360 });
-    } else {
-        // Aggiungo la classe che toglie i pallini dalla list item
-        message.classList.add("list-unstyled");
-        // Altrimenti riceve un messaggio con il numero di occorrenze indovinate
+    } else if (flag) {
+        //Altrimenti riceve quanti numeri ha indovinato
         message.innerHTML = `Hai indovinato <strong>${guessedNumber}</strong> numeri!`;
     }
+    // Infine disattivo il pulsante di conferma
+    elementButton.disabled = true;
+    elementButton.textContent = "Ricarica la pagina per ricominciare";
+    // console.dir(elementButton);
+    
+
+    
 }
-
-
-
